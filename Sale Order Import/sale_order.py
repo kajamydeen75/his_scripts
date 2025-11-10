@@ -2,10 +2,19 @@ import xmlrpc.client
 import pandas as pd
 
 # Odoo connection details
-url = 'http://localhost:1717'
-db = 'his_09112025'
+
+url = 'http://localhost:17175'
+db = 'his_stage_01112025'
 user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
+
+
+# Odoo connection details
+#
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# user = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
 
 # Connect to Odoo
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
@@ -17,7 +26,7 @@ file_path = "proposals.csv"
 
 # Read CSV
 df = pd.read_csv(file_path)
-df = df.head(5)
+# df = df.head(5)
 
 # Conversion helper
 def convert_value(val):
