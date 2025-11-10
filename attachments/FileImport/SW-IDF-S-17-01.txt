@@ -1,0 +1,236 @@
+Running configuration:
+
+; J9772A Configuration Editor; Created on release #YA.16.04.0008
+; Ver #10:19.02.13.98.82.34.61.18.28.f3.84.9c.63.ff.37.27:00
+hostname "SW-IDF-S-17-01"
+timesync sntp
+sntp unicast
+sntp server priority 1 172.17.2.1
+no telnet-server
+time daylight-time-rule continental-us-and-canada
+time timezone -660
+ip default-gateway 172.17.2.1
+interface 1
+   name "AP-Room-1653"
+   exit
+interface 2
+   name "AP-Room-1654"
+   exit
+interface 3
+   name "AP-Room-1657"
+   exit
+interface 4
+   name "AP-Room-1658"
+   exit
+interface 5
+   name "AP-Room-1662"
+   exit
+interface 6
+   name "AP-Room-1665"
+   exit
+interface 7
+   name "AP-Room-1666"
+   exit
+interface 8
+   name "AP-Room-1751"
+   exit
+interface 9
+   name "AP-Room-1752"
+   exit
+interface 10
+   name "AP-Room-1755"
+   exit
+interface 11
+   name "AP-Room-1756"
+   exit
+interface 12
+   name "AP-Room-1759"
+   exit
+interface 13
+   name "AP-Room-1760"
+   exit
+interface 14
+   name "AP-Room-1764"
+   exit
+interface 15
+   name "AP-Room-1767"
+   exit
+interface 16
+   name "AP-Room-1853"
+   exit
+interface 17
+   name "AP-Room-1854"
+   exit
+interface 18
+   name "AP-Room-1857"
+   exit
+interface 19
+   name "AP-Room-1858"
+   exit
+interface 20
+   name "AP-Room-1862"
+   exit
+interface 21
+   name "AP-Room-1865"
+   exit
+interface 22
+   name "AP-Room-1866"
+   exit
+interface 23
+   name "Empty"
+   exit
+interface 24
+   name "Empty"
+   exit
+interface 25
+   name "Empty"
+   exit
+interface 26
+   name "Empty"
+   exit
+interface 27
+   name "Empty"
+   exit
+interface 28
+   name "Empty"
+   exit
+interface 29
+   name "Empty"
+   exit
+interface 30
+   name "Empty"
+   exit
+interface 31
+   name "Empty"
+   exit
+interface 32
+   name "Empty"
+   exit
+interface 33
+   name "Empty"
+   exit
+interface 34
+   name "Empty"
+   exit
+interface 35
+   name "Empty"
+   exit
+interface 36
+   name "Empty"
+   exit
+interface 37
+   name "Empty"
+   exit
+interface 38
+   name "Empty"
+   exit
+interface 39
+   name "Empty"
+   exit
+interface 40
+   name "Empty"
+   exit
+interface 41
+   name "Empty"
+   exit
+interface 42
+   name "Empty"
+   exit
+interface 43
+   name "Empty"
+   exit
+interface 44
+   name "Empty"
+   exit
+interface 45
+   name "Empty"
+   exit
+interface 46
+   name "Empty"
+   exit
+interface 47
+   name "Empty"
+   exit
+interface 48
+   name "Empty"
+   exit
+interface 49
+   name "SW-Core-MDF-5-01"
+   exit
+interface 50
+   name "Empty"
+   exit
+interface 51
+   name "Empty"
+   exit
+interface 52
+   name "Empty"
+   exit
+snmp-server community "hotelw1f1" unrestricted
+snmp-server contact "support@hotelwifi.com"
+vlan 1
+   name "DEFAULT_VLAN"
+   no untagged 1-46
+   untagged 47-52
+   ip address dhcp-bootp
+   exit
+vlan 204
+   name "Siverware"
+   tagged 1-52
+   no ip address
+   exit
+vlan 300
+   name "Conference"
+   no ip address
+   exit
+vlan 800
+   name "Vendor"
+   no ip address
+   exit
+vlan 870
+   name "Highgate"
+   tagged 1-52
+   no ip address
+   exit
+vlan 871
+   name "Synergy"
+   tagged 1-52
+   no ip address
+   exit
+vlan 900
+   name "WAN"
+   no ip address
+   exit
+vlan 1000
+   name "MGMT"
+   tagged 47-52
+   ip address 172.17.2.17 255.255.255.0
+   exit
+vlan 1100
+   name "WiFi-Mgmt"
+   untagged 1-46
+   tagged 47-52
+   no ip address
+   exit
+vlan 2000
+   name "Guest-WiFi"
+   tagged 1-52
+   no ip address
+   exit
+vlan 2010
+   name "VIP"
+   tagged 1-52
+   no ip address
+   exit
+vlan 3000
+   name "Blackhole"
+   no ip address
+   exit
+spanning-tree config-name "HIS"
+spanning-tree instance 1 vlan 900 1000 1100 2000 3000
+no tftp server
+no dhcp config-file-update
+no dhcp image-file-update
+no dhcp tr69-acs-url
+password manager
+password operator
