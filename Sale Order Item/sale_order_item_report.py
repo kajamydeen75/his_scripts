@@ -16,42 +16,51 @@ db = 'hotel-internet-services-stage-12503805'
 user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
-# Connect to Odoo
+# XML-RPC clients with allow_none=True
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
 uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # File path
-file_path = "proposals.csv"
+file_path = "proposal-catalog-item-sorted.csv"
 
-# Read CSV
+
+
+# Load CSV file
 df = pd.read_csv(file_path)
-# df = df.head(5)
-
-# Conversion helper
+# df = df.head(2)
+# Function to handle nulls and dates
 def convert_value(val):
     if pd.isna(val):
-        return ""  # Keep empty string if null
+        return ""   # Keep empty string if null
     if isinstance(val, pd.Timestamp):
-        return val.strftime("%Y-%m-%d")  # Convert dates to string
-    return str(val)
+        return val.strftime("%Y-%m-%d")  # Convert date to string
+    return str(val)  # Convert everything else to string
 
-# ✅ Apply conversion without deprecated `applymap`
-for col in df.columns:
-    df[col] = df[col].map(convert_value)
+# Apply conversion to every value
+records = df.applymap(convert_value).to_dict(orient="records")
 
-# Convert to list of dicts
-records = df.to_dict(orient="records")
-
-print(records, "✅ Conversion complete!")
-
+# Print first 2 rows as example
+# print(records[:2])
+# records = records[:2]
 try:
     result = models.execute_kw(
         db, uid, password,
-        'sale.order', 'import_bulk_sale_orders',
+        'sale.order', 'import_proposal_catalog_items',
         [records]
     )
 except Exception as e:
     result = [{'error': str(e)} for _ in records]
 
 print(result)
+
+
+for idx, msg in enumerate(result):
+    if msg and msg.get("status"):
+        df.at[idx, "Import Status"] = msg["status"].strip()
+    else:
+        df.at[idx, "Import Status"] = ""
+
+
+# Step 7: Save updated file
+df.to_csv(file_path, index=False)
