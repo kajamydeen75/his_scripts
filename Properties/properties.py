@@ -16,7 +16,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 # File path
 file_path = "properties.csv"
 df = pd.read_csv(file_path)
-df = df.head(3)
+# df = df.head(2)
 
 def convert_value(val):
     if pd.isna(val):
@@ -29,7 +29,6 @@ for col in df.columns:
     df[col] = df[col].map(convert_value)
 
 records = df.to_dict(orient="records")
-
 
 try:
     result = models.execute_kw(
