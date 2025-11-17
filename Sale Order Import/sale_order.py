@@ -11,10 +11,10 @@ password = 'kaja@blackbadger.biz'
 
 # Odoo connection details
 #
-url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-db = 'hotel-internet-services-stage-12503805'
-user = 'kaja@blackbadger.biz'
-password = 'kaja@blackbadger.biz'
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# user = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
 
 # Connect to Odoo
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
@@ -22,7 +22,7 @@ uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # File path
-file_path = "proposals.csv"
+file_path = "companies-not-prospects.csv"
 
 # Read CSV
 df = pd.read_csv(file_path)
@@ -48,7 +48,7 @@ print(records, "✅ Conversion complete!")
 try:
     result = models.execute_kw(
         db, uid, password,
-        'sale.order', 'import_bulk_sale_orders',
+        'res.partner', 'import_bulk_companies',
         [records]
     )
 except Exception as e:
