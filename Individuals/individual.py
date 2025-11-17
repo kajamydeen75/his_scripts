@@ -14,9 +14,9 @@ uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # File path
-file_path = "properties.csv"
+file_path = "individuals.csv"
 df = pd.read_csv(file_path)
-# df = df.head(2)
+df = df.head(2)
 
 def convert_value(val):
     if pd.isna(val):
@@ -33,7 +33,7 @@ records = df.to_dict(orient="records")
 try:
     result = models.execute_kw(
         db, uid, password,
-        'site.site', 'import_bulk_site_properties',
+        'res.partner', 'import_bulk_individuals',
         [records]
     )
 except Exception as e:
