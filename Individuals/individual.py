@@ -1,5 +1,6 @@
 import xmlrpc.client
 import pandas as pd
+import re
 
 # Odoo connection details
 
@@ -7,6 +8,14 @@ url = 'http://localhost:1717'
 db = 'his_09112025'
 user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
+
+# Odoo connection details
+url = 'http://localhost:17175'
+db = 'his_stage_01112025'
+username = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
+
+
 
 
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
@@ -16,7 +25,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 # File path
 file_path = "individuals.csv"
 df = pd.read_csv(file_path)
-df = df.head(2)
+# df = df.head(2)
 
 def convert_value(val):
     if pd.isna(val):
@@ -25,8 +34,16 @@ def convert_value(val):
         return val.strftime("%Y-%m-%d")  # Convert dates to string
     return str(val)
 
+def clean_value(val):
+    """Remove invalid XML control characters."""
+    if isinstance(val, str):
+        # Remove ASCII control chars 0x00–0x1F except tab/newline/carriage return
+        val = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F]", "", val)
+    return val
+
 for col in df.columns:
     df[col] = df[col].map(convert_value)
+    df[col] = df[col].map(clean_value)
 
 records = df.to_dict(orient="records")
 
