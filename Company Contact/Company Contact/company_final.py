@@ -2,17 +2,17 @@ import xmlrpc.client
 import pandas as pd
 
 # Odoo connection details
-# url = 'http://localhost:17175'
-# db = 'his_stage_02072025'
-# username = 'kaja@blackbadger.biz'
-# password = 'kaja@blackbadger.biz'
+url = 'http://localhost:17175'
+db = 'his_stage_02072025'
+username = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
 
 
 # Odoo connection details
-url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-db = 'hotel-internet-services-stage-12503805'
-username = 'kaja@blackbadger.biz'
-password = 'kaja@blackbadger.biz'
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# username = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
 
 # Connect to Odoo
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
@@ -20,7 +20,7 @@ uid = common.authenticate(db, username, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # Load Excel
-df = pd.read_excel('Kyley Direct Email Marketing Leads(Leads)(1).xlsx')
+df = pd.read_csv('companies-not-prospects.csv')
 if 'Status' not in df.columns:
     df['Status'] = ''
 # subset_df = df.head(20)
@@ -64,9 +64,8 @@ tag_map = {
 # Prepare partner data
 partners_to_import = []
 for index, row in subset_df.iterrows():
-    company_name = str(row.get('Company', '')).strip()
-    fname = str(row.get('First Name', '')).strip()
-    lname = str(row.get('Last Name', '')).strip()
+    company_name = str(row.get('CRM Client Id', '')).strip()
+    company_name = str(row.get('Name', '')).strip()
     email1 = str(row.get('Email', '')).strip()
     email2 = str(row.get('Email 2', '')).strip()
     phone = str(row.get('Phone', '')).strip()
