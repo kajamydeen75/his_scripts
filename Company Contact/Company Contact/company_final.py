@@ -3,7 +3,7 @@ import pandas as pd
 
 # Odoo connection details
 url = 'http://localhost:17175'
-db = 'his_stage_02072025'
+db = 'his_stage_01112025'
 username = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
