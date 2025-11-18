@@ -16,10 +16,10 @@ password = 'kaja@blackbadger.biz'
 
 
 # Odoo connection details
-# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-# db = 'hotel-internet-services-stage-12503805'
-# username = 'kaja@blackbadger.biz'
-# password = 'kaja@blackbadger.biz'
+url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+db = 'hotel-internet-services-stage-12503805'
+username = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
 
 
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
