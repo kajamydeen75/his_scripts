@@ -72,7 +72,7 @@ for index, row in subset_df.iterrows():
     country = str(row.get('Country', '')).strip()
     state = str(row.get('State', '')).strip()
     tag = str(row.get('Tags', '')).strip()
-    sales_rep = str(row.get('Sales Rep', '')).strip()
+    sales_rep = str(row.get('Salesperson', '')).strip()
     address = str(row.get('Address', '')).strip()
     address2 = row.get('Address 2', '')
     print(address2)
@@ -117,8 +117,8 @@ for index, row in subset_df.iterrows():
 
     partner_vals = {
         'company_name': company_name,
-        'fname': fname,
-        'lname': lname,
+        # 'fname': fname,
+        # 'lname': lname,
         'email': email1,
         'secondary_email': email2,
         'phone': phone,
