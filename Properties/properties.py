@@ -29,7 +29,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 # File path
 file_path = "properties.csv"
 df = pd.read_csv(file_path)
-# df = df.head(300)
+# df = df.head(10)
 # df = df.iloc[200:2000]
 print(df)
 def convert_value(val):

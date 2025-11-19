@@ -28,7 +28,7 @@ file_path = "proposal-catalog-item-sorted.csv"
 
 # Load CSV file
 df = pd.read_csv(file_path)
-# df = df.head(2)
+# df = df.head(55)
 # Function to handle nulls and dates
 def convert_value(val):
     if pd.isna(val):
