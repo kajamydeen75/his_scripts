@@ -9,6 +9,21 @@ db = 'his_09112025'
 user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
+
+url = 'http://localhost:17175'
+db = 'his_stage_01112025'
+user = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
+
+
+# Odoo connection details
+#
+url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+db = 'hotel-internet-services-stage-12503805'
+user = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
+
+
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
 uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
@@ -16,7 +31,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 # File path
 file_path = "document-mapping.csv"
 df = pd.read_csv(file_path)
-df = df.head(2)
+# df = df.head(2)
 
 
 def convert_value(val):
