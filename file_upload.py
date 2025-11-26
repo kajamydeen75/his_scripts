@@ -15,10 +15,10 @@ db = 'his_stage_01112025'
 username = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
-# odoo_url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-# db = 'hotel-internet-services-stage-12503805'
-# username = 'kaja@blackbadger.biz'
-# password = 'kaja@blackbadger.biz'
+odoo_url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+db = 'hotel-internet-services-stage-12503805'
+username = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
 
 file_size_mb = 100                         # Size of fake file (MB)
 file_name = f"auto_generated_{file_size_mb}MB.bin"

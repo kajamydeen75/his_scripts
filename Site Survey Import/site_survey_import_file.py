@@ -42,7 +42,7 @@ records = df.applymap(convert_value).to_dict(orient="records")
 
 # Print first 2 rows as example
 # print(records[:2])
-# records = records[:2]
+records = records[:2]
 try:
     result = models.execute_kw(
         db, uid, password,
