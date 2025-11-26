@@ -11,56 +11,78 @@ password = 'kaja@blackbadger.biz'
 
 # Odoo connection details
 #
-url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-db = 'hotel-internet-services-stage-12503805'
-user = 'kaja@blackbadger.biz'
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# user = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
+
+# Production
+url = 'https://touchstone1.odoo.com'
+db = 'hotel-internet-services-live-10380387'
+username = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
-# XML-RPC clients with allow_none=True
+# XML-RPC clients
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
 uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
-# File path
-file_path = "companies-not-prospects.csv"
-
-
-
-# Load CSV file
+# ------------------------------------------------------------
+# Load CSV and Filter Missing Items Only
+# ------------------------------------------------------------
+file_path = "companies-all.csv"
 df = pd.read_csv(file_path)
-# df = df.head(10)
-# Function to handle nulls and dates
+
+print("Columns:", df.columns.tolist())
+
+# Filter rows where Missed Items = Missing
+# missing_df = df[df["Missed Items"].eq("Missing")]
+missing_df = df
+
+print("\nMissing Records:")
+print(missing_df)
+
+# ------------------------------------------------------------
+# Prepare Records for Odoo Import
+# ------------------------------------------------------------
 def convert_value(val):
+    """Convert values to strings, handle nulls and dates."""
     if pd.isna(val):
-        return ""   # Keep empty string if null
+        return ""
     if isinstance(val, pd.Timestamp):
-        return val.strftime("%Y-%m-%d")  # Convert date to string
-    return str(val)  # Convert everything else to string
+        return val.strftime("%Y-%m-%d")
+    return str(val)
 
-# Apply conversion to every value
-records = df.applymap(convert_value).to_dict(orient="records")
+records = missing_df.applymap(convert_value).to_dict(orient="records")
 
-# Print first 2 rows as example
-# print(records[:2])
-# records = records[:2]
+# ------------------------------------------------------------
+# Call Odoo Import Method
+# ------------------------------------------------------------
 try:
     result = models.execute_kw(
-        db, uid, password,
-        'res.partner', 'import_bulk_companies',
+        db,
+        uid,
+        password,
+        'res.partner',
+        'import_bulk_companies',
         [records]
     )
 except Exception as e:
-    result = [{'error': str(e)} for _ in records]
+    print("Error:", e)
+    result = [{'error': str(e)}]
 
+print("\nOdoo Response:")
 print(result)
 
-
-# for idx, msg in enumerate(result):
-#     if msg and msg.get("status"):
-#         df.at[idx, "Import Status"] = msg["status"].strip()
-#     else:
-#         df.at[idx, "Import Status"] = ""
+# # ------------------------------------------------------------
+# # Update Only Missing Rows in Original DataFrame
+# # ------------------------------------------------------------
+# df.loc[missing_df.index, "Import Status"] = [
+#     r.get("status", "") if isinstance(r, dict) else "" for r in result
+# ]
 #
-#
-# # Step 7: Save updated file
+# # ------------------------------------------------------------
+# # Save Updated CSV
+# # ------------------------------------------------------------
 # df.to_csv(file_path, index=False)
+# print("\nUpdated CSV saved!")

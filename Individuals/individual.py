@@ -30,7 +30,8 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 # File path
 file_path = "individuals.csv"
 df = pd.read_csv(file_path)
-# df = df.head(2)
+# df = df.head(1000)
+# df = df.iloc[2999:4000]
 
 def convert_value(val):
     if pd.isna(val):
