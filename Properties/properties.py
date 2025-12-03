@@ -36,7 +36,7 @@ models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 file_path = "properties-all-2.csv"
 df = pd.read_csv(file_path)
 # df = df.head(10)
-# df = df.iloc[200:2000]
+# df = df.iloc[3400:4000]
 print(df)
 def convert_value(val):
     if pd.isna(val):

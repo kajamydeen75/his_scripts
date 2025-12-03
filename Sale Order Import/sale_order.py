@@ -11,9 +11,15 @@ password = 'kaja@blackbadger.biz'
 
 # Odoo connection details
 #
-url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-db = 'hotel-internet-services-stage-12503805'
-user = 'kaja@blackbadger.biz'
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# user = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
+
+# # Production
+url = 'https://touchstone1.odoo.com'
+db = 'hotel-internet-services-live-10380387'
+username = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
 # Connect to Odoo
@@ -22,7 +28,7 @@ uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # File path
-file_path = "proposals.csv"
+file_path = "quotes-and-sales-orders-all-2.csv"
 
 # Read CSV
 df = pd.read_csv(file_path)

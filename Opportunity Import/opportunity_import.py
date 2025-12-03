@@ -9,11 +9,18 @@ user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
 
-# Odoo connection details
+
 #
-url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
-db = 'hotel-internet-services-stage-12503805'
-user = 'kaja@blackbadger.biz'
+# # Odoo connection details
+# #
+# url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
+# db = 'hotel-internet-services-stage-12503805'
+# user = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
+#
+url = 'https://touchstone1.odoo.com'
+db = 'hotel-internet-services-live-10380387'
+username = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
 # XML-RPC clients with allow_none=True
@@ -22,13 +29,14 @@ uid = common.authenticate(db, user, password, {})
 models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object', allow_none=True)
 
 # File path
-file_path = "opportunity-10-30-25.csv"
+file_path = "opportunity-all 12-1.csv"
 
 
 
 # Load CSV file
 df = pd.read_csv(file_path)
 # df = df.head(2)
+# df = df.iloc[24000:26000]
 # Function to handle nulls and dates
 def convert_value(val):
     if pd.isna(val):
@@ -54,13 +62,13 @@ except Exception as e:
 
 print(result)
 
-
-for idx, msg in enumerate(result):
-    if msg and msg.get("status"):
-        df.at[idx, "Import Status"] = msg["status"].strip()
-    else:
-        df.at[idx, "Import Status"] = ""
-
-
-# Step 7: Save updated file
-df.to_csv(file_path, index=False)
+#
+# for idx, msg in enumerate(result):
+#     if msg and msg.get("status"):
+#         df.at[idx, "Import Status"] = msg["status"].strip()
+#     else:
+#         df.at[idx, "Import Status"] = ""
+#
+#
+# # Step 7: Save updated file
+# df.to_csv(file_path, index=False)
