@@ -9,14 +9,15 @@ user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
 
-# Odoo connection details
+
 #
+# # Odoo connection details
+# #
 # url = 'https://hotel-internet-services-stage-12503805.dev.odoo.com'
 # db = 'hotel-internet-services-stage-12503805'
 # user = 'kaja@blackbadger.biz'
 # password = 'kaja@blackbadger.biz'
-
-# Production
+#
 url = 'https://touchstone1.odoo.com'
 db = 'hotel-internet-services-live-10380387'
 username = 'kaja@blackbadger.biz'
@@ -41,6 +42,7 @@ missing_df = df
 
 print("\nMissing Records:")
 print(missing_df)
+
 
 # ------------------------------------------------------------
 # Prepare Records for Odoo Import
