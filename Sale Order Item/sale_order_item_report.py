@@ -64,11 +64,11 @@ print(f"Unique proposals: {len(proposal_order)}")
 # ------------------------------------------------------
 # BATCH PROCESSING (10 PROPOSALS PER BATCH)
 # ------------------------------------------------------
-GROUP_BATCH_SIZE = 10
+GROUP_BATCH_SIZE = 100
 
 batches = [
     proposal_order[i : i + GROUP_BATCH_SIZE]
-    for i in range(0, len(proposal_order), GROUP_BATCH_SIZE)
+    for i in range(6400, len(proposal_order), GROUP_BATCH_SIZE)
 ]
 
 print(f"Total batches: {len(batches)}\n")
