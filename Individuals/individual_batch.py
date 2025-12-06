@@ -1,6 +1,8 @@
 import xmlrpc.client
 import pandas as pd
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
 # Odoo connection details
 
@@ -61,35 +63,61 @@ for col in df.columns:
 # ------------------------------------------------------------
 # BATCH PROCESSING
 # ------------------------------------------------------------
-BATCH_SIZE = 500
+BATCH_SIZE = 100
+MAX_THREADS = 5
+
 total_rows = len(df)
 final_results = []
 
 print(f"Total rows: {total_rows}")
 print(f"Processing in batches of {BATCH_SIZE}...\n")
 
-for start in range(0, total_rows, BATCH_SIZE):
-    end = start + BATCH_SIZE
-    batch_df = df.iloc[start:end]
-    batch_records = batch_df.to_dict(orient="records")
+# Build list of batches
+batches = [
+    df.iloc[i:i + BATCH_SIZE].to_dict(orient="records")
+    for i in range(0, total_rows, BATCH_SIZE)
+]
 
-    print(f"➡ Processing batch {start} → {start + len(batch_df)}")
 
-    try:
-        batch_result = models.execute_kw(
-            db, uid, password,
-            'res.partner', 'import_bulk_individuals',
-            [batch_records]
-        )
-    except Exception as e:
-        batch_result = [{'error': str(e)} for _ in batch_records]
+# ------------------------------------------------------------
+# MULTITHREAD WORKER — NO TRY/EXCEPT
+# ------------------------------------------------------------
+def process_batch(batch_index, batch_records):
 
-    final_results.extend(batch_result)
+    print(f"➡ Thread-{batch_index}: Starting batch ({len(batch_records)} records)")
 
-    print(f"✔ Completed batch ({len(batch_df)} records)\n")
+    # Each thread uses its own XML-RPC proxy
+    models_thread = xmlrpc.client.ServerProxy(
+        f"{url}/xmlrpc/2/object", allow_none=True
+    )
+
+    # ANY ERROR HERE WILL STOP THE WHOLE SCRIPT
+    result = models_thread.execute_kw(
+        db, uid, password,
+        'res.partner', 'import_bulk_individuals',
+        [batch_records]
+    )
+
+    print(f"✔ Thread-{batch_index}: Completed")
+    return result
+
+
+# ------------------------------------------------------------
+# EXECUTE MULTITHREAD IMPORT
+# ------------------------------------------------------------
+with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+    futures = {
+        executor.submit(process_batch, idx, batch): idx
+        for idx, batch in enumerate(batches)
+    }
+
+    for future in as_completed(futures):
+        result = future.result()  # ERROR HERE WILL STOP EVERYTHING
+        final_results.extend(result)
 
 # ------------------------------------------------------------
 # FINAL RESULT OUTPUT
 # ------------------------------------------------------------
+print("\n🎉 ALL BATCHES COMPLETED\n")
 print("FINAL RESULTS:")
 print(final_results)

@@ -79,17 +79,17 @@ for start in range(0, total_rows, BATCH_SIZE):
 # ------------------------------------------------------------
 # UPDATE Import Status COLUMN
 # ------------------------------------------------------------
-if "Import Status" not in df.columns:
-    df["Import Status"] = ""
-
-for idx, msg in enumerate(final_results):
-    if msg and isinstance(msg, dict) and msg.get("status"):
-        df.at[idx, "Import Status"] = msg["status"].strip()
-    else:
-        df.at[idx, "Import Status"] = ""
-
-# ------------------------------------------------------------
-# SAVE UPDATED CSV
-# ------------------------------------------------------------
-df.to_csv(file_path, index=False)
+# if "Import Status" not in df.columns:
+#     df["Import Status"] = ""
+#
+# for idx, msg in enumerate(final_results):
+#     if msg and isinstance(msg, dict) and msg.get("status"):
+#         df.at[idx, "Import Status"] = msg["status"].strip()
+#     else:
+#         df.at[idx, "Import Status"] = ""
+#
+# # ------------------------------------------------------------
+# # SAVE UPDATED CSV
+# # ------------------------------------------------------------
+# df.to_csv(file_path, index=False)
 print("🎉 Done! File updated with import status.")

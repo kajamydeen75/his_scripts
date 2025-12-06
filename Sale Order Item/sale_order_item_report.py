@@ -1,13 +1,15 @@
 import csv
 import xmlrpc.client
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
 # ------------------------------------------------------
 # Odoo connection
 # ------------------------------------------------------
-# url = 'http://localhost:17175'
-# db = 'his_stage_01112025'
-# user = 'kaja@blackbadger.biz'
-# password = 'kaja@blackbadger.biz'
+url = 'http://localhost:17175'
+db = 'his_stage_01112025'
+username = 'kaja@blackbadger.biz'
+password = 'kaja@blackbadger.biz'
 
 # Odoo connection details
 #
@@ -68,29 +70,73 @@ GROUP_BATCH_SIZE = 100
 
 batches = [
     proposal_order[i : i + GROUP_BATCH_SIZE]
-    for i in range(6400, len(proposal_order), GROUP_BATCH_SIZE)
+    for i in range(0, len(proposal_order), GROUP_BATCH_SIZE)
 ]
 
 print(f"Total batches: {len(batches)}\n")
 
 final_results = []
 
+
 # ------------------------------------------------------
-# SEND EACH BATCH TO ODOO
+# MULTITHREAD + RETRY FUNCTION
 # ------------------------------------------------------
-for batch_index, proposal_list in enumerate(batches, start=1):
-    print(f"➡ Processing batch {batch_index} ({len(proposal_list)} proposals)")
+RETRY_COUNT = 3
+
+def process_batch(batch_index, proposal_list):
+    print(f"➡ Thread-{batch_index}: Processing batch ({len(proposal_list)} proposals)")
 
     merged_records = []
     for proposal_id in proposal_list:
         # **ORDER-PRESERVED append**
         merged_records.extend(groups[proposal_id])
 
-    batch_result = models.execute_kw(
-        db, uid, password,
-        'sale.order', 'import_proposal_catalog_items',
-        [merged_records]
-    )
+    attempt = 1
+    while attempt <= RETRY_COUNT:
+        try:
+            # each thread needs its own XML-RPC connection
+            models_thread = xmlrpc.client.ServerProxy(
+                f'{url}/xmlrpc/2/object', allow_none=True
+            )
 
-    final_results.extend(batch_result)
-    print(f"✔ Completed batch {batch_index} ({len(merged_records)} rows)\n")
+            result = models_thread.execute_kw(
+                db, uid, password,
+                'sale.order', 'import_proposal_catalog_items',
+                [merged_records]
+            )
+
+            print(f"✔ Thread-{batch_index}: Completed (attempt {attempt})")
+            return result
+
+        except Exception as e:
+            print(f"❌ Thread-{batch_index}: Attempt {attempt} failed → {e}")
+
+            if attempt == RETRY_COUNT:
+                print(f"❌ Thread-{batch_index}: Giving up after {RETRY_COUNT} attempts.")
+                return [{"error": str(e)}]
+
+            time.sleep(3)
+            attempt += 1
+
+
+# ------------------------------------------------------
+# EXECUTE IN PARALLEL
+# ------------------------------------------------------
+MAX_THREADS = 7
+
+with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+    futures = {
+        executor.submit(process_batch, idx + 1, batch): idx + 1
+        for idx, batch in enumerate(batches)
+    }
+
+    for future in as_completed(futures):
+        result = future.result()
+        final_results.extend(result)
+
+
+# ------------------------------------------------------
+# FINAL RESULTS
+# ------------------------------------------------------
+print("\n🎉 ALL BATCHES COMPLETED")
+print(final_results)

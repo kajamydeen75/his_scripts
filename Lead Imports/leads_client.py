@@ -1,5 +1,6 @@
 import xmlrpc.client
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Odoo connection details
 
@@ -20,7 +21,7 @@ password = 'kaja@blackbadger.biz'
 # Production
 url = 'https://touchstone1.odoo.com'
 db = 'hotel-internet-services-live-10380387'
-username = 'kaja@blackbadger.biz'
+user = 'kaja@blackbadger.biz'
 password = 'kaja@blackbadger.biz'
 
 # XML-RPC clients with allow_none=True
@@ -47,31 +48,65 @@ for col in df.columns:
     df[col] = df[col].map(convert_value)
 
 # ------------------------------------------------------------
-# BATCH PROCESSING (1000 per batch)
+# BATCH PREPARATION
 # ------------------------------------------------------------
 BATCH_SIZE = 100
+MAX_THREADS = 5   # run 5 batches simultaneously
+
 total_rows = len(df)
 final_results = []
 
 print(f"Total rows: {total_rows}")
 print(f"Processing in batches of {BATCH_SIZE}...\n")
 
-for start in range(2200, total_rows, BATCH_SIZE):
-    end = start + BATCH_SIZE
-    batch_df = df.iloc[start:end]
-    batch_records = batch_df.to_dict(orient="records")
+# Prepare batches
+batches = [
+    df.iloc[i:i + BATCH_SIZE].to_dict(orient="records")
+    for i in range(10, total_rows, BATCH_SIZE)
+]
 
-    print(f"➡ Processing batch {start} → {start + len(batch_df)}")
 
-    batch_result = models.execute_kw(
+# ------------------------------------------------------------
+# THREAD WORKER (NO try/except)
+# ------------------------------------------------------------
+def process_batch(batch_index, batch_records):
+    print(f"➡ Thread-{batch_index}: Processing {len(batch_records)} records")
+
+    # each thread creates its own XML-RPC model client
+    models_thread = xmlrpc.client.ServerProxy(
+        f'{url}/xmlrpc/2/object', allow_none=True
+    )
+
+    # NO TRY/EXCEPT → errors will propagate and stop the script
+    result = models_thread.execute_kw(
         db, uid, password,
         'crm.lead', 'import_bulk_leads_client',
         [batch_records]
     )
 
-    final_results.extend(batch_result)
+    print(f"✔ Thread-{batch_index}: Completed")
+    return result
 
-    print(f"✔ Completed batch ({len(batch_df)} records)\n")
+
+# ------------------------------------------------------------
+# EXECUTE THREADS
+# ------------------------------------------------------------
+with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+    futures = {
+        executor.submit(process_batch, idx, batch): idx
+        for idx, batch in enumerate(batches)
+    }
+
+    for future in as_completed(futures):
+        output = future.result()      # if any exception occurs → script stops
+        final_results.extend(output)
+
+
+# ------------------------------------------------------------
+# FINAL RESULTS
+# ------------------------------------------------------------
+print("\n🎉 ALL BATCHES COMPLETED\n")
+print(final_results)
 
 #
 # # ------------------------------------------------------------
