@@ -17,10 +17,10 @@ password = 'kaja@blackbadger.biz'
 # user = 'kaja@blackbadger.biz'
 # password = 'kaja@blackbadger.biz'
 
-url = 'https://touchstone1.odoo.com'
-db = 'hotel-internet-services-live-10380387'
-username = 'kaja@blackbadger.biz'
-password = 'kaja@blackbadger.biz'
+# url = 'https://touchstone1.odoo.com'
+# db = 'hotel-internet-services-live-10380387'
+# username = 'kaja@blackbadger.biz'
+# password = 'kaja@blackbadger.biz'
 
 # XML-RPC clients with allow_none=True
 common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', allow_none=True)
